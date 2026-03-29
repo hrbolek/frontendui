@@ -1,6 +1,6 @@
 {
-    "name": "@hrbolek/uoisfrontend-template",
-    "version": "0.6.2",
+    "name": "majda-semestr-package",
+    "version": "0.6.3",
     "private": false,
     "publishConfig": {
         "access": "public"
@@ -17,9 +17,9 @@
         "build": "vite build",
         "prepublishOnly": "npm run build"
     },
-    "author": "",
+    "author": "Magdalena Cetlova",
     "license": "ISC",
-    "description": "",
+    "description": "komponenta pro semestrální projekt",
     "dependencies": {
         "react-bootstrap-icons": "^1.11.5",
         "react-router": "^7.0.2",
