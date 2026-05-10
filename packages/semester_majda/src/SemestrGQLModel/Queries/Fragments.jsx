@@ -15,7 +15,7 @@ mandatory
 credits
 classificationtypeId
 classificationtype{
-  __typename
+ __typename
   id
   name
 }

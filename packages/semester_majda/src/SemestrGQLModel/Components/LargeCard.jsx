@@ -39,7 +39,7 @@ export const LargeCard = ({ item, children, CardCapsule=CardCapsule_, MediumCont
                     <CardCapsule item={item} title="Detail">
                         <MediumContent item={item} />
                     </CardCapsule>
-                    {<InteractiveMutations item={item} /> }
+                    <InteractiveMutations item={item} /> 
                 </LeftColumn>
                 <MiddleColumn>
                     {children}
