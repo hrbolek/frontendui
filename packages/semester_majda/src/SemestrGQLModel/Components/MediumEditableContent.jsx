@@ -24,12 +24,13 @@ import { Input } from "../../../../_template/src/Base/FormControls/Input"
  * </TemplateMediumContent>
  */
 export const MediumEditableContent = ({ item, onChange=(e)=>null, onBlur=(e)=>null, children}) => {
+    const handleChangeMandatory = (e) => {onChange({target: { id: "mandatory", value: e.target.checked} }) }
     return (
         <>           
         {/* defaultValue={item?.name|| "Název"}  */}
             <Input id={"order"} type = "number" label={"Pořadí"} className="form-control" value={item?.order?? " "} onChange={onChange} onBlur={onBlur} />
-            <Input id={"credits"} label={"Kredity"} className="form-control" value={item?.credits?? " "} onChange={onChange} onBlur={onBlur} />
-            <Input id={"mandatory"} label={"Povinný"} className="form-control" value={item?.mandatory?? " "} onChange={onChange} onBlur={onBlur} />
+            <Input id={"credits"} type = "number" label={"Kredity"} className="form-control" value={item?.order?? " "} onChange={onChange} onBlur={onBlur} />
+            <Input id={"mandatory"} type = "checkbox" label={"Povinný"}  value={item?.mandatory?? " "} onChange={handleChangeMandatory} onBlur={onBlur} />
             {children}
         </>
     )
