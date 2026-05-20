@@ -19,7 +19,10 @@ classificationtype{
   id
   name
 }
-subjectId  
+subject {
+  id
+  name
+}    
   
 }
 `

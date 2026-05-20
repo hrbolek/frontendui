@@ -46,9 +46,14 @@ export const DeleteItemURI = `${DeleteURI}${idParam}`;
  */
 export const Link = ({ item, LinkURI: LinkURI_ = LinkURI, action="view", children, ...props}) => {
     const targetURI = LinkURI_.replace('view', action);
-    return <ProxyLink to={targetURI + item?.id} {...props}>{children || item?.fullname || item?.name || item?.id || "Nevim"}</ProxyLink>
+    //return <ProxyLink to={targetURI + item?.id} {...props}>{children || item?.fullname || item?.name || item?.id || "Nevim"}</ProxyLink>
     // return <BaseUI.Link item={item} />
     // return <a>{children || item?.fullname || item?.name || item?.id || "Nevim"}</a>
+    return (
+        <ProxyLink to={targetURI + item?.id} {...props}>
+            {children || item?.subject?.name || item?.classificationtype?.name || item?.fullname || item?.name || item?.id || "Nevim"}
+        </ProxyLink>
+    )
 }
 
 registerLink('SemestrGQLModel', Link)

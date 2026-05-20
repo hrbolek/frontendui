@@ -145,12 +145,12 @@ export const MediumContent = ({ item, children }) => {
                 {item?.mandatory === true ? "Ano" : item?.mandatory === false ? "Ne" : "—"}
             </Attribute>
 
-            <Attribute label="Subject ID">
-                {item?.subjectId ?? "—"}
+            <Attribute label="Subject">
+                {item?.subject?.name ?? item?.subjectId ?? "-"}
             </Attribute>
 
-            <Attribute label="Classification type ID">
-                {item?.classificationtypeId ?? "—"}
+            <Attribute label="Classification type">
+                {item?.classificationtype?.name ?? item?.classificationtypeId ?? "—"}
             </Attribute>
 
             <Attribute label="Last changed">
