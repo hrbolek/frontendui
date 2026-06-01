@@ -16,6 +16,24 @@ export const MediumEditableContent = ({ item, onChange = (e) => null, onBlur = (
     return (
         <>
             <Input
+                id={"name"}
+                label={"Název"}
+                className="form-control"
+                value={item?.name ?? ""}
+                onChange={onChange}
+                onBlur={onBlur}
+            />
+
+            <Input
+                id={"description"}
+                label={"Popis"}
+                className="form-control"
+                value={item?.description ?? ""}
+                onChange={onChange}
+                onBlur={onBlur}
+            />
+            
+            <Input
                 id="order"
                 type="number"
                 label="Pořadí"

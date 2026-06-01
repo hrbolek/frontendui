@@ -95,6 +95,8 @@ import { Link } from "./Link"
 
 import { MediumContent as MediumContent_} from "../../../../_template/src/Base/Components/MediumContent"
 import {Attribute, formatDateTime} from "../../../../_template/src/Base/Components"
+import { ProxyLink } from "../../../../_template/src/Base/Components/ProxyLink"
+import { URIRoot } from "../../uriroot"
 
 //export { MediumContent } from "../../../../_template/src/Base/Components/MediumContent"
 
@@ -155,6 +157,62 @@ export const MediumContent = ({ item, children }) => {
 
             <Attribute label="Last changed">
                 {item?.lastchange ? formatDateTime(item.lastchange) : "—"}
+            </Attribute>
+
+            <Attribute label="Lekce / témata semestru">
+                {item?.topics?.length > 0 ? (
+                    <ul>
+                        {item.topics.map((topic) => (
+                            <li key={topic.id}>
+                                {topic.name || topic.nameEn || topic.id}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                     "—"
+                )}
+            </Attribute>
+            
+            <Attribute label="Lekce / témata semestru">
+                {item?.topics?.length > 0 ? (
+                    <ul>
+                        {item.topics.map((topic) => (
+                            <li key={topic.id}>
+                                <strong>{topic.name || topic.nameEn || topic.id}</strong>
+
+                                {topic.lessons?.length > 0 ? (
+                                    <ul>
+                                        {topic.lessons.map((lesson) => (
+                                            <li key={lesson.id}>
+                                                {lesson.type?.name || "Lekce"} – počet jednotek: {lesson.count ?? "—"}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div>Bez lekcí</div>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    "—"
+                )}
+            </Attribute>
+
+            <Attribute label="Studijní plány">
+                {item?.plans?.length > 0 ? (
+                    <ul>
+                        {item.plans.map((plan) => (
+                            <li key={plan.id}>
+                                <ProxyLink to={`${URIRoot}/StudyPlanGQLModel/view/${plan.id}`}>
+                                    {plan.eventId || plan.examId || plan.id}
+                                </ProxyLink>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                     "—"
+                )}
             </Attribute>
 
             <hr />

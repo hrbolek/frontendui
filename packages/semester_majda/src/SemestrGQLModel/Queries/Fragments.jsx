@@ -42,7 +42,29 @@ fragment Large on SemesterGQLModel {
   topics {
     __typename
     id
+    name
+    nameEn
+    order
+    description
+    lessons{
+      __typename
+      id
+      count
+      typeId
+      type{
+        __typename
+        id
+        name
+      }
+    }
   }
+  plans{
+  __typename
+  id
+  semesterId
+  examId
+  eventId
+  }  
 }
 `
 

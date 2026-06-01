@@ -3,29 +3,35 @@ import { LargeFragment } from "./Fragments";
 import { createAsyncGraphQLAction2 } from "../../../../dynamic/src/Core/createAsyncGraphQLAction2";
 
 const DeleteMutationStr = `
-mutation roleTypeDelete(
-	$id: UUID! # null, 
-	$lastchange: DateTime! # null
+mutation topicDelete(
+    $id: UUID!,
+    $lastchange: DateTime!
 ) {
-  roleTypeDelete(
-	roleType: {
-	id: $id, 
-	lastchange: $lastchange}
-  ) {
-        ...RoleTypeGQLModelDeleteError
+    topicDelete(
+        topic: {
+            id: $id,
+            lastchange: $lastchange
+        }
+    ) {
+        __typename
+        ... on TopicGQLModelDeleteError {
+            Entity {
+                __typename
+                id
+                lastchange
+                semesterId
+                name
+                nameEn
+                order
+                description
+            }
+            msg
+            code
+            failed
+            location
+            input
+        }
     }
-}
-
-fragment RoleTypeGQLModelDeleteError on RoleTypeGQLModelDeleteError {
-  __typename
-  Entity {
-    ...Large
-  }
-  msg
-  code
-  failed
-  location
-  input
 }
 `
 const DeleteMutation = createQueryStrLazy(`${DeleteMutationStr}`, LargeFragment)

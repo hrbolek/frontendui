@@ -15,7 +15,7 @@ const permissions = {
     mode: "absolute",
 }
 
-const defaultitem = { name: "Nový" };
+const defaultitem = { name: "Nové téma", nameEn: " ",order: 1, description: " "};
 
 /**
  * Wrapper nad `BaseCreateLink` (alias importu `CreateLink` z Base/Mutations/Create),
