@@ -11,3 +11,5 @@ export * from './LiveEdit'
 
 
 export * from './ConfirmEdit'
+export * from './TopicEditableContent'
+``

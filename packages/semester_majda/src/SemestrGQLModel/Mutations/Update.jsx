@@ -8,7 +8,7 @@ import {
 import { MediumEditableContent, UpdateItemURI } from "../Components";
 import { UpdateAsyncAction } from "../Queries";
 
-const DefaultContent = (props) => <MediumEditableContent {...props} />
+const DefaultContent = (props) => <MediumEditableContent {...props} />;
 const mutationAsyncAction = UpdateAsyncAction
 
 const permissions = {

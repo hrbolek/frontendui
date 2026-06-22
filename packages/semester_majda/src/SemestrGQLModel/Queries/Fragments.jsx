@@ -39,34 +39,49 @@ fragment Medium on SemesterGQLModel {
 const LargeFragmentStr = `
 fragment Large on SemesterGQLModel {
   ...Medium
+
   topics {
     __typename
     id
+    lastchange
+    created
+    createdbyId
+    changedbyId
+    rbacobjectId
+
+    rbacobject {
+      ...RBRoles
+    }
+
+    semesterId
     name
     nameEn
     order
     description
-    lessons{
+
+    lessons {
       __typename
       id
       count
       typeId
-      type{
+      type {
         __typename
         id
         name
       }
     }
   }
-  plans{
-  __typename
-  id
-  semesterId
-  examId
-  eventId
-  }  
+
+  plans {
+    __typename
+    id
+    semesterId
+    examId
+    eventId
+  }
 }
-`
+`;
+``
 
 const RoleFragmentStr = `
 fragment Role on RoleGQLModel {

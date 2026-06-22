@@ -1,13 +1,11 @@
 import { createQueryStrLazy } from "@hrbolek/uoisfrontend-gql-shared";
-import { LargeFragment } from "./Fragments";
 import { createAsyncGraphQLAction2 } from "../../../../dynamic/src/Core/createAsyncGraphQLAction2";
-
 
 const InsertMutationStr = `
 mutation topicInsert(
-    $semesterId: UUID,
+    $semesterId: UUID!,
+    $name: String!,
     $id: UUID,
-    $name: String,
     $nameEn: String,
     $order: Int,
     $description: String
@@ -22,6 +20,8 @@ mutation topicInsert(
             description: $description
         }
     ) {
+        __typename
+
         ... on TopicGQLModel {
             __typename
             id
@@ -32,17 +32,29 @@ mutation topicInsert(
             order
             description
         }
-        ... on TopicGQLModelTopicGQLModelInsertError {
+
+        ... on TopicGQLModelInsertError {
             __typename
             msg
             failed
             code
             location
             input
+            Entity {
+                __typename
+                id
+                lastchange
+                semesterId
+                name
+                nameEn
+                order
+                description
+            }
         }
     }
 }
-`
+`;
 
-const InsertMutation = createQueryStrLazy(`${InsertMutationStr}`, LargeFragment)
-export const InsertAsyncAction = createAsyncGraphQLAction2(InsertMutation)
+const InsertMutation = createQueryStrLazy(`${InsertMutationStr}`);
+export const InsertAsyncAction = createAsyncGraphQLAction2(InsertMutation);
+``

@@ -10,6 +10,7 @@ services:
   frontend:
     image: hrbolek/frontend:0.11.0
     environment:
+      - name=value
       - DEMO=True
       - DEMODATA=True
       # link na db mimo stack
