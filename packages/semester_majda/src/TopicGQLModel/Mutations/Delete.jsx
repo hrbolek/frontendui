@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 
 import { DeleteItemURI, ListURI, MediumContent } from "../Components";
 import { DeleteAsyncAction } from "../Queries";
@@ -45,6 +44,7 @@ export const DeleteButton = ({
     ...props
 }) => {
     const [show, setShow] = useState(false);
+    const dropdownMenuRef = useRef(null);
 
     const {
         loading: saving,
@@ -54,12 +54,34 @@ export const DeleteButton = ({
         mode: "confirm",
     });
 
-    const handleOpen = () => {
+    const cleanupDropdownClass = () => {
+        if (dropdownMenuRef.current) {
+            dropdownMenuRef.current.classList.remove("topic-delete-dropdown-modal");
+            dropdownMenuRef.current = null;
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            cleanupDropdownClass();
+        };
+    }, []);
+
+    const handleOpen = (e) => {
         console.log("OTEVÍRÁM DELETE DIALOG PRO TOPIC", item);
+
+        const dropdownMenu = e?.currentTarget?.closest?.(".dropdown-menu");
+
+        if (dropdownMenu) {
+            dropdownMenuRef.current = dropdownMenu;
+            dropdownMenu.classList.add("topic-delete-dropdown-modal");
+        }
+
         setShow(true);
     };
 
     const handleCancel = () => {
+        cleanupDropdownClass();
         setShow(false);
     };
 
@@ -91,70 +113,121 @@ export const DeleteButton = ({
             oneOfRoles={permissions.oneOfRoles}
             mode={permissions.mode}
         >
-            <button
-                {...props}
-                type="button"
-                className={className}
-                onClick={handleOpen}
-            >
-                {children}
-            </button>
+            <style>
+                {`
+                    .topic-delete-dropdown-modal {
+                        position: fixed !important;
+                        top: 50% !important;
+                        left: 50% !important;
+                        transform: translate(-50%, -50%) !important;
+                        width: min(850px, 92vw) !important;
+                        max-width: 850px !important;
+                        min-width: 600px !important;
+                        max-height: 80vh !important;
+                        overflow: visible !important;
+                        padding: 0 !important;
+                        border: none !important;
+                        border-radius: 0.75rem !important;
+                        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.35) !important;
+                        z-index: 2000 !important;
+                        background: white !important;
+                    }
+
+                    .topic-delete-panel {
+                        background: white;
+                        border-radius: 0.75rem;
+                        overflow: hidden;
+                    }
+
+                    .topic-delete-panel-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        padding: 1rem 1.5rem;
+                        border-bottom: 1px solid #dee2e6;
+                    }
+
+                    .topic-delete-panel-body {
+                        padding: 1.5rem;
+                        max-height: 55vh;
+                        overflow-y: auto;
+                        font-size: 1rem;
+                    }
+
+                    .topic-delete-panel-footer {
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 0.75rem;
+                        padding: 1rem 1.5rem;
+                        border-top: 1px solid #dee2e6;
+                    }
+                `}
+            </style>
+
+            {!show && (
+                <button
+                    {...props}
+                    type="button"
+                    className={className}
+                    onClick={handleOpen}
+                >
+                    {children}
+                </button>
+            )}
 
             {show && (
-                <>
-                    <div
-                        className="modal fade show"
-                        style={{ display: "block" }}
-                        tabIndex="-1"
-                    >
-                        <div className="modal-dialog modal-lg">
-                            <div className="modal-content">
-                                <div className="modal-header">
-                                    <h5 className="modal-title">Odstranit</h5>
+                <div
+                    className="topic-delete-panel"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="topic-delete-panel-header">
+                        <h4 className="m-0">Odstranit topic</h4>
 
-                                    <button
-                                        type="button"
-                                        className="btn-close"
-                                        onClick={handleCancel}
-                                        disabled={saving}
-                                    />
-                                </div>
-
-                                <div className="modal-body">
-                                    <DefaultContent_ item={item} />
-
-                                    <AsyncStateIndicator
-                                        error={savingError}
-                                        loading={saving}
-                                        text="Odstraňuji"
-                                    />
-                                </div>
-
-                                <div className="modal-footer">
-                                    <button
-                                        type="button"
-                                        className="btn btn-success"
-                                        onClick={handleDelete}
-                                        disabled={saving}
-                                    >
-                                        {saving ? "Mažu..." : "Odstranit"}
-                                    </button>
-
-                                    <button
-                                        type="button"
-                                        className="btn btn-outline-danger"
-                                        onClick={handleCancel}
-                                        disabled={saving}
-                                    >
-                                        Zrušit
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button
+                            type="button"
+                            className="btn-close"
+                            onClick={handleCancel}
+                            disabled={saving}
+                            aria-label="Zavřít"
+                        />
                     </div>
 
-                    <div className="modal-backdrop fade show" />
-                </>
+                    <div className="topic-delete-panel-body">
+                        <div className="alert alert-warning">
+                            Opravdu chceš odstranit tento topic?
+                        </div>
+
+                        <div className="border rounded p-3 bg-light">
+                            <DefaultContent_ item={item} />
+                        </div>
+
+                        <AsyncStateIndicator
+                            error={savingError}
+                            loading={saving}
+                            text="Odstraňuji"
+                        />
+                    </div>
+
+                    <div className="topic-delete-panel-footer">
+                        <button
+                            type="button"
+                            className="btn btn-success btn-lg"
+                            onClick={handleDelete}
+                            disabled={saving}
+                        >
+                            {saving ? "Mažu..." : "Odstranit"}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="btn btn-outline-danger btn-lg"
+                            onClick={handleCancel}
+                            disabled={saving}
+                        >
+                            Zrušit
+                        </button>
+                    </div>
+                </div>
             )}
         </PermissionGate>
     );
