@@ -17,17 +17,26 @@ export const MediumEditableContent = ({
         });
     };
 
-    const handleMandatoryChange = (e) => {
-        onChange({
-            target: {
-                id: "mandatory",
-                value: Boolean(e?.target?.checked),
-            },
-        });
-    };
-
     return (
         <>
+            <Input
+                id="name"
+                label="Název tématu"
+                className="form-control"
+                value={item?.name ?? ""}
+                onChange={onChange}
+                onBlur={onBlur}
+            />
+
+            <Input
+                id="nameEn"
+                label="Anglický název"
+                className="form-control"
+                value={item?.nameEn ?? ""}
+                onChange={onChange}
+                onBlur={onBlur}
+            />
+
             <Input
                 id="order"
                 type="number"
@@ -39,22 +48,11 @@ export const MediumEditableContent = ({
             />
 
             <Input
-                id="credits"
-                type="number"
-                label="Kredity"
+                id="description"
+                label="Popis"
                 className="form-control"
-                value={item?.credits ?? ""}
-                onChange={handleNumberChange("credits")}
-                onBlur={onBlur}
-            />
-
-            <Input
-                id="mandatory"
-                type="checkbox"
-                label="Povinný"
-                className="form-check-input"
-                checked={Boolean(item?.mandatory)}
-                onChange={handleMandatoryChange}
+                value={item?.description ?? ""}
+                onChange={onChange}
                 onBlur={onBlur}
             />
 

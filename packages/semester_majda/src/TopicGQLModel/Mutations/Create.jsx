@@ -16,9 +16,10 @@ const permissions = {
 };
 
 const defaultitem = {
+    name: "Nové téma",
+    nameEn: "",
+    description: "",
     order: 1,
-    credits: 0,
-    mandatory: false,
 };
 
 export const CreateLink = ({
@@ -56,7 +57,7 @@ export const CreateButton = ({
 };
 
 export const CreateDialog = ({
-    title = "Nový semestr",
+    title = "Nové téma",
     DefaultContent: defaultContent = DefaultContent,
     readItemURI = ReadItemURI,
     item = defaultitem,
@@ -85,7 +86,6 @@ export const CreateBody = ({
             DefaultContent={defaultContent}
             readItemURI={readItemURI}
             mutationAsyncAction={mutationAsyncAction}
-            {...permissions}
         />
     );
 };

@@ -1,17 +1,10 @@
 import { CardCapsule } from "../Components";
 import { VectorItemsURI } from "../Components";
-
 import { UpdateButton, UpdateLink } from "./Update";
-import { CreateButton as TopicCreateButton } from "../../TopicGQLModel/Mutations/Create";
-
+import { DeleteButton } from "./Delete";
 import { ProxyLink } from "../../../../_template/src/Base/Components/ProxyLink";
 
-export const PageLink = ({
-    children,
-    preserveHash = true,
-    preserveSearch = true,
-    ...props
-}) => {
+export const PageLink = ({ children, preserveHash = true, preserveSearch = true, ...props }) => {
     return (
         <ProxyLink
             to={VectorItemsURI}
@@ -24,7 +17,7 @@ export const PageLink = ({
     );
 };
 
-export const InteractiveMutations = ({ item }) => {
+export const PageMutations = ({ item }) => {
     return (
         <CardCapsule item={item} title="Nástroje">
             <PageLink className="btn btn-outline-success">
@@ -47,19 +40,13 @@ export const InteractiveMutations = ({ item }) => {
                 Upravit Dialog
             </UpdateButton>
 
-            <TopicCreateButton
-                className="btn btn-outline-success"
-                item={{
-                    semesterId: item.id,
-                    name: "Nové téma",
-                    nameEn: "",
-                    description: "",
-                    order: (item?.topics?.length ?? 0) + 1,
-                }}
+            <DeleteButton
+                className="btn btn-outline-danger"
+                item={item}
                 rbacitem={item}
             >
-                Vytvořit téma
-            </TopicCreateButton>
+                Odstranit
+            </DeleteButton>
         </CardCapsule>
     );
 };

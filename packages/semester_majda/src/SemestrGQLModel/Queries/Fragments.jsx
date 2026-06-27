@@ -45,18 +45,8 @@ fragment Large on SemesterGQLModel {
     id
     lastchange
     created
-    createdbyId
-    changedbyId
-    rbacobjectId
 
-    rbacobject {
-      ...RBRoles
-    }
-
-    semesterId
     name
-    nameEn
-    order
     description
 
     lessons {
@@ -143,4 +133,15 @@ export const RBACFragment = createQueryStrLazy(`${RBACFragmentStr}`)
 export const LinkFragment = createQueryStrLazy(`${LinkFragmentStr}`)
 export const MediumFragment = createQueryStrLazy(`${MediumFragmentStr}`, LinkFragment, RBACFragment)
 export const LargeFragment = createQueryStrLazy(`${LargeFragmentStr}`, MediumFragment)
+
+/*createdbyId
+    changedbyId
+    rbacobjectId
+
+    rbacobject {
+      ...RBRoles
+    }
+      semesterId
+      order
+      nameEn*/
   
