@@ -84,5 +84,14 @@ export const StudyPlanLink = ({
     );
 };
 
-registerLink("SemesterGQLModel", Link);
-registerLink("StudyPlanGQLModel", StudyPlanLink);
+registerLink(
+    "SemesterGQLModel",
+    Link,
+    ReadURI
+);
+
+registerLink(
+    "StudyPlanGQLModel",
+    StudyPlanLink,
+    "/studyplan/StudyPlanGQLModel/view/"
+);
