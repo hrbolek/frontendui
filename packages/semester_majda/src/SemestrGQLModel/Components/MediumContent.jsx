@@ -1,49 +1,33 @@
-import { Col } from "../../../../_template/src/Base/Components/Col"
-import { Row } from "../../../../_template/src/Base/Components/Row"
-import { Link } from "./Link"
-/**
- * A component that displays medium-level content for an template entity.
- *
- * This component renders a label "TemplateMediumContent" followed by a serialized representation of the `template` object
- * and any additional child content. It is designed to handle and display information about an template entity object.
- *
- * @component
- * @param {Object} props - The properties for the TemplateMediumContent component.
- * @param {Object} props.template - The object representing the template entity.
- * @param {string|number} props.template.id - The unique identifier for the template entity.
- * @param {string} props.template.name - The name or label of the template entity.
- * @param {React.ReactNode} [props.children=null] - Additional content to render after the serialized `template` object.
- *
- * @returns {JSX.Element} A JSX element displaying the entity's details and optional content.
- *
- * @example
- * // Example usage:
- * const templateEntity = { id: 123, name: "Sample Entity" };
- * 
- * <TemplateMediumContent template={templateEntity}>
- *   <p>Additional information about the entity.</p>
- * </TemplateMediumContent>
- */
-// export const MediumContent = ({ item, children}) => {
-//     return (
-//         <MediumContent_ item={item}>
-//             {children}
-//         </MediumContent_>
-//     )
-// }
+import {
+    Attribute,
+    formatDateTime,
+} from "../../../../_template/src/Base/Components";
 
-import { MediumContent as MediumContent_} from "../../../../_template/src/Base/Components/MediumContent"
-import {Attribute, formatDateTime} from "../../../../_template/src/Base/Components"
-import { ProxyLink } from "../../../../_template/src/Base/Components/ProxyLink"
-import { URIRoot } from "../../uriroot"
-const STUDY_PLAN_VIEW_URI = "/generic/StudyPlanGQLModel/view";
+import { Link } from "./Link";
+
+const getStudyPlanURI = (id) => {
+    const relativeURI = `/studyplan/StudyPlanGQLModel/view/${id}`;
+
+    if (typeof window === "undefined") {
+        return relativeURI;
+    }
+
+    const isLocalDevelopment =
+        window.location.hostname === "localhost" &&
+        window.location.port === "5173";
+
+    return isLocalDevelopment
+        ? `http://localhost:33001${relativeURI}`
+        : relativeURI;
+};
 
 export const MediumContent = ({ item, children }) => {
     return (
-        
         <>
             <Attribute label="Id">
-                <Link item={item}>{item?.id || "Data error"}</Link>
+                <Link item={item}>
+                    {item?.id || "Data error"}
+                </Link>
             </Attribute>
 
             <Attribute label="Order">
@@ -55,34 +39,47 @@ export const MediumContent = ({ item, children }) => {
             </Attribute>
 
             <Attribute label="Mandatory">
-                {item?.mandatory === true ? "Ano" : item?.mandatory === false ? "Ne" : "—"}
+                {item?.mandatory === true
+                    ? "Ano"
+                    : item?.mandatory === false
+                        ? "Ne"
+                        : "—"}
             </Attribute>
 
             <Attribute label="Subject">
-                {item?.subject?.name ?? item?.subjectId ?? "-"}
+                {item?.subject?.name ?? item?.subjectId ?? "—"}
             </Attribute>
 
             <Attribute label="Classification type">
-                {item?.classificationtype?.name ?? item?.classificationtypeId ?? "—"}
+                {item?.classificationtype?.name
+                    ?? item?.classificationtypeId
+                    ?? "—"}
             </Attribute>
 
             <Attribute label="Last changed">
-                {item?.lastchange ? formatDateTime(item.lastchange) : "—"}
+                {item?.lastchange
+                    ? formatDateTime(item.lastchange)
+                    : "—"}
             </Attribute>
 
-            
             <Attribute label="Lekce / témata semestru">
                 {item?.topics?.length > 0 ? (
                     <ul>
                         {item.topics.map((topic) => (
                             <li key={topic.id}>
-                                <strong>{topic.name || topic.nameEn || topic.id}</strong>
+                                <strong>
+                                    {topic.name
+                                        || topic.nameEn
+                                        || topic.id}
+                                </strong>
 
                                 {topic.lessons?.length > 0 ? (
                                     <ul>
                                         {topic.lessons.map((lesson) => (
                                             <li key={lesson.id}>
-                                                {lesson.type?.name || "Lekce"} – počet jednotek: {lesson.count ?? "—"}
+                                                {lesson.type?.name || "Lekce"}
+                                                {" – počet jednotek: "}
+                                                {lesson.count ?? "—"}
                                             </li>
                                         ))}
                                     </ul>
@@ -102,11 +99,11 @@ export const MediumContent = ({ item, children }) => {
                     <ul>
                         {item.plans.map((plan) => (
                             <li key={plan.id}>
-                                <ProxyLink
-                                    to={`${STUDY_PLAN_VIEW_URI}/${plan.id}`}
-                                >
-                                    {plan.name || plan.eventId || plan.examId || plan.id}
-                                </ProxyLink>
+                                <a href={getStudyPlanURI(plan.id)}>
+                                    {plan.eventId
+                                        || plan.examId
+                                        || plan.id}
+                                </a>
                             </li>
                         ))}
                     </ul>
@@ -116,8 +113,8 @@ export const MediumContent = ({ item, children }) => {
             </Attribute>
 
             <hr />
+
             {children}
-            
         </>
-    )
-}
+    );
+};

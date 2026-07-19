@@ -1,13 +1,29 @@
 import { createQueryStrLazy } from "@hrbolek/uoisfrontend-gql-shared";
-import { LargeFragment } from "./Fragments";
+import { LinkFragment } from "./Fragments";
 import { createAsyncGraphQLAction2 } from "../../../../dynamic/src/Core/createAsyncGraphQLAction2";
 
 const ReadPageQueryStr = `
-query semesterPage($skip: Int, $limit: Int, $orderby: String, $where: SemesterInputFilter) {
-  semesterPage(skip: $skip, limit: $limit, orderby: $orderby, where: $where) {
-    ...Large
-  }
+query semesterPage(
+    $skip: Int,
+    $limit: Int,
+    $orderby: String,
+    $where: SemesterInputFilter
+) {
+    semesterPage(
+        skip: $skip,
+        limit: $limit,
+        orderby: $orderby,
+        where: $where
+    ) {
+        ...Link
+    }
 }
-`
-const ReadPageQuery = createQueryStrLazy(`${ReadPageQueryStr}`, LargeFragment)
-export const ReadPageAsyncAction = createAsyncGraphQLAction2(ReadPageQuery)
+`;
+
+const ReadPageQuery = createQueryStrLazy(
+    ReadPageQueryStr,
+    LinkFragment
+);
+
+export const ReadPageAsyncAction =
+    createAsyncGraphQLAction2(ReadPageQuery);

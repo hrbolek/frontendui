@@ -45,9 +45,11 @@ export default defineConfig({
     // Development server configuration
     server: {
         proxy: {
-            // Define proxy rules for API requests
-            // Example: Requests to /api/gql are proxied to http://localhost:33001
-            '/api/gql': 'http://localhost:33001',
+            "/api/gql": {
+                target: "http://localhost:33002",
+                changeOrigin: true,
+                secure: false,
+            },
         },
         watch: {
             // Specify paths to watch for changes

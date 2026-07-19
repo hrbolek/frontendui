@@ -1,9 +1,9 @@
 {
   "name": "@maya0552/app_semestr",
   "private": false,
-  "version": "0.5.1",
+  "version": "0.5.3",
   "type_": "module",
-  "files":[
+  "files": [
     "src",
     "dist"
   ],
@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview", 
+    "preview": "vite preview",
     "build:production": "NODE_ENV=production vite build",
     "prepublishOnly": "npm run build"
   },
@@ -22,7 +22,6 @@
     "bootstrap": "^5.3.3",
     "@popperjs/core": "^2.11.8",
     "@apollo/client": "^4.0.10",
-
     "@hrbolek/uoisfrontend-template": "*",
     "@hrbolek/uoisfrontend-shared": "*",
     "@hrbolek/uoisfrontend-gql-shared": "*",
