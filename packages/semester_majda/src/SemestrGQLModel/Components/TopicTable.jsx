@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+
 import {
     Table as BaseTable,
     buildTableDef,
@@ -8,10 +9,35 @@ import {
 import { DeleteButton as TopicDeleteButton } from "../../TopicGQLModel/Mutations/Delete";
 
 export const TopicTable = ({ data, semester }) => {
-    const table_def = useMemo(() => {
-        if (!data || data.length === 0) return {};
+    const [deletedTopicIds, setDeletedTopicIds] = useState(
+        () => new Set()
+    );
 
-        const def = buildTableDef(data);
+    const handleTopicDeleted = useCallback((deletedId) => {
+        setDeletedTopicIds((currentIds) => {
+            const updatedIds = new Set(currentIds);
+            updatedIds.add(deletedId);
+
+            return updatedIds;
+        });
+    }, []);
+
+    const visibleData = useMemo(() => {
+        if (!data) {
+            return [];
+        }
+
+        return data.filter(
+            (topic) => !deletedTopicIds.has(topic.id)
+        );
+    }, [data, deletedTopicIds]);
+
+    const table_def = useMemo(() => {
+        if (visibleData.length === 0) {
+            return {};
+        }
+
+        const def = buildTableDef(visibleData);
 
         def.tools = {
             label: "Nástroje",
@@ -20,15 +46,12 @@ export const TopicTable = ({ data, semester }) => {
                     <KebabMenu
                         actions={[
                             {
-                                label: "TEST TopicTable",
-                                onClick: () => console.log("Používá se TopicTable", row),
-                            },
-                            {
                                 children: (
                                     <TopicDeleteButton
                                         className="btn btn-sm btn-outline-secondary border-0 text-start w-100"
                                         item={row}
                                         rbacitem={semester}
+                                        onDeleted={handleTopicDeleted}
                                     >
                                         Smazat topic
                                     </TopicDeleteButton>
@@ -41,9 +64,16 @@ export const TopicTable = ({ data, semester }) => {
         };
 
         return def;
-    }, [data, semester]);
+    }, [visibleData, semester, handleTopicDeleted]);
 
-    if (!data || data.length === 0) return null;
+    if (visibleData.length === 0) {
+        return null;
+    }
 
-    return <BaseTable data={data} table_def={table_def} />;
+    return (
+        <BaseTable
+            data={visibleData}
+            table_def={table_def}
+        />
+    );
 };

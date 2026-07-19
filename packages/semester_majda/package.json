@@ -7,6 +7,8 @@
     },
     "_main": "src/index.js",
     "_module": "src/index.js",
+    "main": "dist/cjs/index.js",
+    "module": "dist/es/index.js",
     "files": [
         "dist",
         "src"

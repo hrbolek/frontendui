@@ -17,7 +17,11 @@ const DefaultContent = MediumContent;
 const MutationAsyncAction = DeleteAsyncAction;
 
 const permissions = {
-    oneOfRoles: ["studijní administrátor", "garant předmětu", "garant programu"],
+    oneOfRoles: [
+        "studijní administrátor",
+        "garant předmětu",
+        "garant programu"
+    ],
     mode: "absolute",
 };
 
@@ -39,6 +43,7 @@ export const DeleteButton = ({
     DefaultContent: DefaultContent_ = DefaultContent,
     item,
     rbacitem,
+    onDeleted,
     children = "Smazat topic",
     className = "btn btn-outline-danger",
     ...props
@@ -56,7 +61,10 @@ export const DeleteButton = ({
 
     const cleanupDropdownClass = () => {
         if (dropdownMenuRef.current) {
-            dropdownMenuRef.current.classList.remove("topic-delete-dropdown-modal");
+            dropdownMenuRef.current.classList.remove(
+                "topic-delete-dropdown-modal"
+            );
+
             dropdownMenuRef.current = null;
         }
     };
@@ -67,10 +75,8 @@ export const DeleteButton = ({
         };
     }, []);
 
-    const handleOpen = (e) => {
-        console.log("OTEVÍRÁM DELETE DIALOG PRO TOPIC", item);
-
-        const dropdownMenu = e?.currentTarget?.closest?.(".dropdown-menu");
+    const handleOpen = (event) => {
+        const dropdownMenu = event?.currentTarget?.closest?.(".dropdown-menu");
 
         if (dropdownMenu) {
             dropdownMenuRef.current = dropdownMenu;
@@ -86,10 +92,7 @@ export const DeleteButton = ({
     };
 
     const handleDelete = async () => {
-        console.log("KLIK NA ODSTRANIT TOPIC", item);
-
         if (!item?.id || !item?.lastchange) {
-            console.error("Topic nemá id nebo lastchange:", item);
             return;
         }
 
@@ -99,11 +102,14 @@ export const DeleteButton = ({
                 lastchange: item.lastchange,
             });
 
-            console.log("VÝSLEDEK SMAZÁNÍ TOPICU", result);
+            cleanupDropdownClass();
+            setShow(false);
 
-            window.location.reload();
-        } catch (e) {
-            console.error("CHYBA PŘI MAZÁNÍ TOPICU", e);
+            if (onDeleted) {
+                await onDeleted(item.id, result);
+            }
+        } catch {
+            // Chybu z mutace zobrazí AsyncStateIndicator.
         }
     };
 
@@ -178,7 +184,7 @@ export const DeleteButton = ({
             {show && (
                 <div
                     className="topic-delete-panel"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(event) => event.stopPropagation()}
                 >
                     <div className="topic-delete-panel-header">
                         <h4 className="m-0">Odstranit topic</h4>

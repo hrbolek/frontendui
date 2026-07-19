@@ -32,114 +32,11 @@ import { Link } from "./Link"
 //     )
 // }
 
-// export const MediumContent_ = ({ item, children }) => {
-//     return (
-//         <>
-//             {Object.entries(item).map(([attribute_name, attribute_value]) => {
-//                 // if (attribute_name !== "id") return null
-//                 if (Array.isArray(attribute_value)) return null
-//                 if (typeof attribute_value === "object" && attribute_value !== null) return null
-//                 let attribute_value_result = attribute_value
-//                 // let attribute_value_result = attribute_value
-//                 if (Array.isArray(attribute_value))
-//                     // attribute_value_result = <CardCapsule><Table data={attribute_value} /></CardCapsule>
-//                     return null
-//                 else if (typeof attribute_value === "object" && attribute_value !== null)
-//                     // attribute_value_result = <MediumCard item={attribute_value} />
-//                     return null
-//                 else if (attribute_name === "__typename") {
-//                     /*attribute_value_result = <Link item={attribute_value} />*/
-//                     // console.log("else1", attribute_name, attribute_value)
-//                 }
-//                 if (attribute_name === "id")
-//                     attribute_value_result = <Link item={item}>{item?.id || "Data error"}</Link>
-//                 if (attribute_name === "name")
-//                     attribute_value_result = <Link item={item} />
-//                 // else return null
-//                 if (attribute_value)
-//                     return (
-//                         <Row key={attribute_name}>
-//                             <Col className="col-4"><b>{attribute_name}</b></Col>
-//                             <Col className="col-8">{attribute_value_result}</Col>
-//                         </Row>
-//                     )
-//                 else return null
-//             })}
-//             {Object.entries(item).map(([attribute_name, attribute_value]) => {
-//                 if (attribute_value !== null) return null
-//                 let attribute_value_result = JSON.stringify(attribute_value)
-//                 if (Array.isArray(attribute_value))
-//                     // attribute_value_result = <CardCapsule><Table data={attribute_value} /></CardCapsule>
-//                     return null
-//                 else if (typeof attribute_value === "object" && attribute_value !== null)
-//                     // attribute_value_result = <MediumCard item={attribute_value} />
-//                     return null
-//                 else if (attribute_name === "__typename") {
-//                     /*attribute_value_result = <Link item={attribute_value} />*/
-//                     console.log("else2", attribute_name, attribute_value)
-//                 }
-//                 if (attribute_value)
-//                     return null
-//                 else
-//                     return (
-//                         <Row key={attribute_name}>
-//                             <Col className="col-4"><b>{attribute_name}</b></Col>
-//                             <Col className="col-8">{attribute_value_result}</Col>
-//                         </Row>
-//                     )
-//             })}
-//             {children}
-//         </>
-//     )
-// }
-
 import { MediumContent as MediumContent_} from "../../../../_template/src/Base/Components/MediumContent"
 import {Attribute, formatDateTime} from "../../../../_template/src/Base/Components"
 import { ProxyLink } from "../../../../_template/src/Base/Components/ProxyLink"
 import { URIRoot } from "../../uriroot"
-
-//export { MediumContent } from "../../../../_template/src/Base/Components/MediumContent"
-
-/*export const MediumContent = ({ item, children}) => {
-    return (
-        <>
-            <Attribute label="Id">
-                <Link item={item}/>
-            </Attribute>
-            <Attribute label="Order">
-                <Link item={item}>
-                    {item?.order || item?.id || "Data Error"}
-                </Link>
-            </Attribute>
-            <hr/>
-            <Attribute label="Zmeneno">
-                {formatDateTime(item?.lastchange)}
-                {item?.changeby?.fullname}
-            </Attribute>
-            <hr/>
-            {item?.id}{" "}
-            {item?.order}
-            <hr/>
-        <MediumContent_ item={item}>
-            {children}
-        </MediumContent_>
-
-         <Attribute label="Lekce / témata semestru">
-                {item?.topics?.length > 0 ? (
-                    <ul>
-                        {item.topics.map((topic) => (
-                            <li key={topic.id}>
-                                {topic.name || topic.nameEn || topic.id}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                     "—"
-                )}
-            </Attribute>
-</>
-)
-}*/
+const STUDY_PLAN_VIEW_URI = "/generic/StudyPlanGQLModel/view";
 
 export const MediumContent = ({ item, children }) => {
     return (
@@ -205,14 +102,16 @@ export const MediumContent = ({ item, children }) => {
                     <ul>
                         {item.plans.map((plan) => (
                             <li key={plan.id}>
-                                <ProxyLink to={`${URIRoot}/StudyPlanGQLModel/view/${plan.id}`}>
-                                    {plan.eventId || plan.examId || plan.id}
+                                <ProxyLink
+                                    to={`${STUDY_PLAN_VIEW_URI}/${plan.id}`}
+                                >
+                                    {plan.name || plan.eventId || plan.examId || plan.id}
                                 </ProxyLink>
                             </li>
                         ))}
                     </ul>
                 ) : (
-                     "—"
+                    "—"
                 )}
             </Attribute>
 
