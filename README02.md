@@ -1,68 +1,258 @@
-# Semestrální projekt – SemesterGQLModel
+# Semestr předmětu – SemesterGQLModel
 
-## Cíl projektu
+Semestrální projekt do předmětu Informatika zaměřený na frontendovou část informačního systému. Aplikace zobrazuje informace o semestru předmětu, jeho tématech a lekcích, umožňuje vybrané údaje upravovat a propojuje semestr s plánem studia předmětu.
 
-Cílem projektu je vytvořit frontendovou část aplikace pro práci s entitou `SemesterGQLModel`.
-V této fázi (1A projektový den) je cílem vytvořit funkční stránku v režimu **readonly**, která načítá data z backendu pomocí GraphQL a zobrazuje je na stránce.
+Projekt vznikl rozšířením společné šablony poskytnuté vyučujícím. Je součástí většího systému, ve kterém jednotliví studenti vytvářejí frontendové části pro různé GraphQL modely.
 
----
+- Autorka: Magdalena Cetlová
+- GitHub: [Maya0552/frontendui](https://github.com/Maya0552/frontendui)
+- Vývojová větev: `monorepo`
+- Knihovní balíček: [`@maya0552/semestr`](https://www.npmjs.com/package/@maya0552/semestr)
+- Aplikační balíček: [`@maya0552/app_semestr`](https://www.npmjs.com/package/@maya0552/app_semestr)
 
-## Aktuální stav
+## Zadání
 
-* aplikace běží lokálně
-* backend komunikuje přes GraphQL
-* data se načítají pomocí query
-* funguje readonly stránka semestru
-* upraven byl levý panel detailu (MediumContent)
-* odstraněny rušivé prvky (např. nástroje)
+> **Semestr předmětu (SemesterGQLModel)**  
+> Zobrazte informace o semestru předmětu, jednotlivé lekce semestru a navažte na plány studia předmětu pomocí odkazů.
 
----
+Hlavním modelem projektu je `SemesterGQLModel`. Součástí řešení je také samostatná frontendová podpora pro `TopicGQLModel`, protože témata tvoří vektorový atribut semestru a musí být možné je nejen zobrazit, ale také vytvářet a mazat.
 
-## Deník práce
+## Cíle projektu
 
-### 📅 12-04-2026
+- zobrazit seznam semestrů předmětů;
+- zobrazit detail vybraného semestru;
+- zobrazit předmět, pořadí semestru, počet kreditů, povinnost a způsob zakončení;
+- zobrazit témata semestru a lekce patřící k jednotlivým tématům;
+- umožnit oprávněným uživatelům upravovat údaje semestru;
+- umožnit vytvoření nového tématu;
+- umožnit smazání tématu bez obnovení celé stránky;
+- vytvořit odkazy z plánů studia na detail příslušného studijního plánu;
+- připravit knihovnu a aplikaci k publikaci prostřednictvím npm.
 
-**Co jsem dělala:**
+## Použité technologie
 
-* snažila jsem se pochopit strukturu projektu
-* hledala jsem, kde se skládá readonly stránka
-* upravovala jsem komponenty, aby se změnil obsah stránky
+- React;
+- Vite;
+- React Router;
+- React Bootstrap;
+- GraphQL;
+- Apollo Federation;
+- Docker a Docker Compose;
+- npm workspaces;
+- GitHub Actions;
+- společné balíčky `@hrbolek/uoisfrontend-*`.
 
-**S čím byl problém:**
 
-* nerozuměla jsem, kde se co v projektu nachází
-* nebylo jasné, jak spolu komunikují Queries, Pages a Components
-* nevěděla jsem, která část stránky je moje a která je generovaná
+## Publikace npm
 
-**Na co jsem přišla:**
+Publikace probíhá pomocí workflow **Publish one workspace** v GitHub Actions. Pro publikaci je potřeba:
 
-* `Fragments.jsx` určuje, jaká data se načítají
-* `ReadAsyncAction` volá backend
-* `PageBase` skládá stránku
-* `LargeCard` rozděluje layout
-* `MediumContent` ovlivňuje levý detail
-* pravá část stránky je generovaná přes template (`GeneratedContentBase`)
+1. zvýšit verzi v příslušném `package.json`;
+2. sestavit balíček a ověřit jeho obsah;
+3. změny commitnout a odeslat na GitHub;
+4. v GitHub Actions spustit workflow **Publish one workspace**;
+5. zadat přesný název workspace;
+6. nejprve publikovat `@maya0552/semestr` a potom `@maya0552/app_semestr`.
 
-**Jak jsem testovala:**
+Workflow používá repozitářový secret `NPM_TOKEN`. Token nesmí být uložen přímo v repozitáři ani vypsán do dokumentace.
 
-* přidala jsem do komponenty červený blok, abych ověřila, že se renderuje
-* použila jsem `console.log`, abych viděla data (`item`)
-* postupně jsem vypínala části kódu (např. template content), abych zjistila, co ovlivňuje stránku
+## Vývojový deník
 
-**Jak jsem to vyřešila:**
+Následující časová osa vychází z historie commitů ve větvi `monorepo`. Popisuje nejen výsledky, ale také problémy, slepé cesty a objevené souvislosti.
 
-* upravila jsem `MediumContent.jsx`
-* odstranila jsem generovaný výpis, který překrýval moje změny
-* zakomentovala jsem `InteractiveMutations`, protože stránka má být readonly
-* ověřila jsem, že změny se projeví na stránce
+### Začátek práce a orientace v projektu
 
-**Závěr:**
-Na začátku jsem se v projektu vůbec neorientovala a nerozuměla jsem jeho struktuře.
-Postupně jsem pochopila, jak spolu komunikují jednotlivé části (Queries, Pages, Components) a kde se mění obsah stránky. Na začátku jsem se v projektu vůbec neorientovala a nerozuměla jsem jeho struktuře.
-Postupně jsem pochopila, jak spolu komunikují jednotlivé části (Queries, Pages, Components) a kde se mění obsah stránky.
+#### 1.–12. dubna 2026
 
-Podařilo se mi vytvořit funkční readonly stránku, která načítá data z GraphQL a zobrazuje je v upraveném detailu entity.
+Na začátku pro mě bylo nejdůležitější zorientovat se ve velkém monorepozitáři a pochopit, která komponenta ovlivňuje kterou část výsledné stránky. Projekt vycházel z obecné šablony, ve které bylo mnoho souborů a komponent se stejnými nebo podobnými názvy.
 
-Tento krok považuji za základ pro další práci na projektu.
+Nejprve jsem hledala, kde se mění obsah detailu. Postupně jsem zjistila, že hlavní zobrazení ovlivňuje komponenta `MediumContent`. Začala jsem v ní nahrazovat obecný výpis konkrétními atributy modelu semestru.
 
----
+Důležité commity:
+
+- [`c8a9681`](https://github.com/Maya0552/frontendui/commit/c8a9681) – přidání a první úpravy `MediumContent`;
+- [`d107933`](https://github.com/Maya0552/frontendui/commit/d107933) – „uprava MediumContent (ready na 1. projektovy den)“.
+
+Výsledkem prvního projektového dne byla funkční readonly stránka. Zobrazovala identifikátor, pořadí, kredity, povinnost, předmět, způsob zakončení a datum poslední změny. V této fázi jsem také dočasně oddělila zobrazení od interaktivních mutací, abych mohla nejprve ověřit správné načítání dat.
+
+Co jsem objevila:
+
+- jak jsou propojené `LargeCard`, `MediumContent`, stránky a GraphQL fragmenty;
+- že frontend zobrazí pouze pole, která jsou součástí GraphQL dotazu nebo fragmentu;
+- že obecná šablona se musí přizpůsobit konkrétnímu GraphQL modelu;
+- jak fungují vlastní cesty a odkazy modelu.
+
+### Mutace semestru
+
+#### 10.–20. května 2026
+
+Cílem druhého projektového dne bylo vytvořit zapisovatelnou stránku a zprovoznit mutace semestru. Postupovala jsem po jednotlivých atributech, protože tak šlo lépe poznat, která změna způsobila případnou chybu.
+
+Důležité commity:
+
+- [`d1b98b1`](https://github.com/Maya0552/frontendui/commit/d1b98b1) – mutace atributu `order`;
+- [`485abf3`](https://github.com/Maya0552/frontendui/commit/485abf3) – mutace `credits` a první zpracování `mandatory`;
+- [`a43d462`](https://github.com/Maya0552/frontendui/commit/a43d462) – další úpravy mutace `mandatory`;
+- [`ba67c97`](https://github.com/Maya0552/frontendui/commit/ba67c97) – nahrazení technických ID čitelnějšími názvy;
+- [`2533e7d`](https://github.com/Maya0552/frontendui/commit/2533e7d) – navazující publikace změn.
+
+Pro `order` a `credits` bylo potřeba upravit editovatelný obsah i GraphQL mutaci `semesterUpdate`. U číselných hodnot bylo zároveň nutné ohlídat, aby formulář neposílal textový řetězec místo čísla.
+
+Největší problém představoval atribut `mandatory`. Ve formuláři je reprezentován checkboxem, takže se nečte stejně jako klasický textový vstup. Přidala jsem obsluhu hodnoty `checked` a zkoušela několik způsobů předání boolean hodnoty do změnového stavu. Tlačítko nebo požadavek však v některých situacích nereagovaly očekávaným způsobem a změna se na backendu neprojevila.
+
+Tento problém zatím nepovažuji za definitivně vyřešený. Frontend hodnotu zpracovává, ale je potřeba ještě přesně ověřit výsledný GraphQL požadavek a odpověď backendu. Bez této kontroly nelze spolehlivě určit, zda je zbývající chyba ve formuláři, ve sdílené obsluze mutace, nebo na backendu.
+
+Co jsem objevila:
+
+- rozdíl mezi hodnotou textového vstupu a stavem checkboxu;
+- způsob sestavení mutace `semesterUpdate`;
+- význam hodnoty `lastchange` při aktualizaci entity;
+- potřebu převádět formulářové hodnoty na datové typy očekávané GraphQL schématem;
+- práci s rolemi a omezením mutací podle oprávnění.
+
+### Témata jako vektorový atribut
+
+#### 1.–27. června 2026
+
+Třetí projektový den byl zaměřen na témata semestru. Cílem bylo témata zobrazit, vytvořit a smazat. Na rozdíl od jednoduchých atributů jde o vektorový atribut – jeden semestr může obsahovat více topiců a každý topic může obsahovat vlastní lekce.
+
+Důležité commity:
+
+- [`d34376e`](https://github.com/Maya0552/frontendui/commit/d34376e) – témata a čitelnější názvy;
+- [`5c4b9b1`](https://github.com/Maya0552/frontendui/commit/5c4b9b1) – první funkční vytváření topicu;
+- [`43e73b3`](https://github.com/Maya0552/frontendui/commit/43e73b3) – oprava topic mutací;
+- [`3990f39`](https://github.com/Maya0552/frontendui/commit/3990f39) – úprava výsledného zobrazení.
+
+Zpočátku šlo topic vytvořit pomocí tlačítka v detailu, ale nešlo ho odstranit. Smazání fungovalo pouze při ručním spuštění GraphQL operace ve Strawberry/GraphQL rozhraní. To ukázalo, že backendová mutace existuje, ale frontend ji nepoužívá správně.
+
+Dalším problémem bylo, že jsem při pokusu o vytvoření topicu ve skutečnosti vytvářela nový semestr, který se následně ve stránce zobrazil na místě topicu. Příčinou bylo příliš těsné převzetí logiky a komponent z `SemesterGQLModel`. Oba modely sice spolu souvisejí, ale používají jiné GraphQL operace, jiné fragmenty a jiný typ výsledku.
+
+Řešením bylo vytvořit samostatnou složku `TopicGQLModel` s vlastními:
+
+- komponentami;
+- dotazy a fragmenty;
+- create, update a delete mutacemi;
+- stránkami a URI;
+- exporty.
+
+V `SemesterGQLModel` jsem navíc vytvořila `TopicTable.jsx`, která témata zobrazuje jako samostatnou tabulku uvnitř detailu semestru. Díky oddělení odpovědností se přestaly zaměňovat entity semestru a topicu a vytvoření i smazání začalo fungovat.
+
+Co jsem objevila:
+
+- jak pracovat s vektorovým atributem;
+- proč nestačí pouze zkopírovat mutaci jiného modelu;
+- význam `__typename` při zpracování GraphQL výsledku;
+- jak aktualizovat rodičovskou entitu po změně jejího vektorového atributu;
+- proč má mít každý model vlastní dotazy, mutace a URI.
+
+### Smazání bez obnovení stránky
+
+#### 19. července 2026
+
+Původní implementace po úspěšném smazání topicu volala:
+
+```js
+window.location.reload();
+```
+
+To sice zajistilo, že smazaný řádek zmizel, ale obnovila se celá stránka. Vyučující upozornil, že takové řešení není vhodné pro React aplikaci.
+
+V commitu [`59c50b7`](https://github.com/Maya0552/frontendui/commit/59c50b7) jsem automatický refresh odstranila. Po úspěšné delete mutaci nyní komponenta předá informaci o smazaném topicu rodičovské tabulce a ta položku odebere z lokálního seznamu. Uživatelské rozhraní se tak aktualizuje okamžitě bez ztráty stavu celé stránky.
+
+Tato změna mi pomohla lépe pochopit hlavní princip Reactu: vzhled stránky má vycházet ze stavu aplikace. Pokud se změní data, má se změnit stav, ne ručně znovu načíst celý dokument.
+
+### Odkazy na studijní plán
+
+#### 19. července 2026
+
+Další částí zadání bylo propojení semestru s projektem studijního plánu. GraphQL fragment semestru načítá pole `plans` a každý plán je zobrazen jako odkaz.
+
+Relevantní commit:
+
+- [`211f962`](https://github.com/Maya0552/frontendui/commit/211f962) – doplnění a oprava odkazů.
+
+Při vývoji se odkazy nejprve vytvářely přes obecnou cestu:
+
+```text
+/generic/StudyPlanGQLModel/view/:id
+```
+
+Vlastní aplikace však používá cestu:
+
+```text
+/studyplan/StudyPlanGQLModel/view/:id
+```
+
+Bylo proto potřeba upravit nejen odkaz zobrazený v `MediumContent`, ale také odkazy vznikající v automaticky generovaných tabulkách. V lokální Vite aplikaci nyní propojení vede na vlastní frontend studijního plánu.
+
+### Build a npm publikace
+
+#### 19. července 2026
+
+Při první kontrole se build knihovny sice dokončil, ale výsledné soubory byly prakticky prázdné. Příčinou byl prázdný hlavní soubor `src/index.js`, takže Vite neměl co exportovat. Po doplnění exportů modelů se při buildu objevila další chyba: `CUDButton` byl importován, ale nebyl exportován z komponent.
+
+Postup opravy:
+
+1. doplnění exportů ze `src/index.js`;
+2. odstranění neplatných importů ze souborů modelů;
+3. opakované spuštění `npm run build`;
+4. kontrola obsahu pomocí `npm pack --dry-run`;
+5. zvýšení verze balíčku před každou další publikací;
+6. nastavení npm tokenu pro GitHub Actions;
+7. publikace knihovny a aplikace jako dvou samostatných workspaces.
+
+Relevantní commity:
+
+- [`0fe1957`](https://github.com/Maya0552/frontendui/commit/0fe1957) – úpravy balíčku;
+- [`5c68713`](https://github.com/Maya0552/frontendui/commit/5c68713) – navazující opravy;
+- [`1773835`](https://github.com/Maya0552/frontendui/commit/1773835) – publikace;
+- [`fd4abb5`](https://github.com/Maya0552/frontendui/commit/fd4abb5) – opakovaná publikace po opravách.
+
+Při publikaci jsem narazila také na chyby autorizace npm. Nejprve npm vracelo `401 Unauthorized`, později GitHub Actions vyžadovaly jednorázové heslo. Řešením bylo vytvoření vhodného přístupového tokenu, jeho uložení do GitHub Secrets jako `NPM_TOKEN` a opětovné spuštění workflow.
+
+Výsledkem jsou dva veřejné balíčky: knihovna s modely a samostatná Vite aplikace.
+
+## Aktuálně řešený integrační problém
+
+Lokální aplikace na portu `5173` používá vlastní router a fungují v ní cesty pod `/semestr`. Při otevření stejného modelu v hostitelské aplikaci na portu `33001` se však odkazy z automaticky generovaného seznamu stále vytvářejí pod `/generic`.
+
+Pozorované chování:
+
+1. ručně zadaná cesta `/semestr/SemesterGQLModel/list` zobrazí seznam;
+2. odkaz vytvořený tabulkou ale míří na `/generic/SemesterGQLModel/view/:id`;
+3. otevře se obecný prohlížeč místo vlastní stránky;
+4. obecný prohlížeč vytváří rozsáhlejší GraphQL dotaz;
+5. dotaz skončí chybou z federované služby `office`:
+
+```text
+Expected value of type 'EventInvitationGQLModel' but got: <generator>
+```
+
+Samostatné testovací GraphQL dotazy na `semesterPage` přes Apollo gateway vracejí HTTP 200 a správná data. Problém se tedy neprojevuje při základním načtení semestrů, ale až při použití obecného prohlížeče a jeho rozšířeného dotazu.
+
+Dosavadní zjištění ukazují na kombinaci dvou oddělených problémů:
+
+- hostitelský frontend na `33001` nepoužije pro automatický odkaz vlastní registrovanou cestu modelu;
+- obecný GraphQL dotaz následně narazí na chybu resolveru `invitations` ve službě `office`.
+
+Definitivní řešení integrace zatím není potvrzené. Funkčnost vlastního frontendu, vlastních dotazů a publikovaných balíčků byla ověřena odděleně. Po zjištění správného způsobu registrace studentské aplikace do hostitelského frontendu bude tato část dokumentace doplněna.
+
+## Hlavní získané zkušenosti
+
+Během projektu jsem si prakticky vyzkoušela:
+
+- orientaci v rozsáhlejším React monorepozitáři;
+- přizpůsobení obecné šablony konkrétnímu GraphQL modelu;
+- skládání GraphQL fragmentů a dotazů;
+- práci s jednoduchými i vektorovými atributy;
+- vytváření formulářů pro čísla a boolean hodnoty;
+- GraphQL create, update a delete mutace;
+- řízení zobrazení podle uživatelských rolí;
+- aktualizaci React stavu bez obnovení stránky;
+- registraci vlastních odkazů a práci s routerem;
+- diagnostiku rozdílu mezi lokální aplikací a hostitelským frontendem;
+- sestavení knihovny pomocí Vite;
+- kontrolu obsahu npm balíčku;
+- publikaci npm workspaces pomocí GitHub Actions.
+
+Nejdůležitějším zjištěním pro mě bylo, že chyba zobrazená ve frontendu nemusí vznikat přímo v komponentě, která ji ukáže. Pro diagnostiku bylo potřeba odděleně ověřovat React stav, vytvořenou URI, odeslaný GraphQL dotaz, odpověď Apollo gateway a chování jednotlivých federovaných služeb.
