@@ -3,7 +3,10 @@
  *
  * Při vývoji na portu 5173 se odkaz otevře v hlavní aplikaci
  * běžící na portu 33001. V publikované aplikaci se použije
- * relativní adresa.
+ * relativní adresa na stejném serveru.
+ *
+ * Kontrola existence objektu `window` umožňuje bezpečné použití
+ * funkce také v prostředí bez prohlížeče.
  *
  * @param {string} id ID studijního plánu.
  * @returns {string} Adresa detailu studijního plánu.
@@ -26,13 +29,22 @@ const getStudyPlanURI = (id) => {
 };
 
 /**
- * Přehled studijních plánů navázaných na semestr.
+ * Zobrazí přehled studijních plánů navázaných na semestr.
+ *
+ * Každý studijní plán je zobrazen jako samostatná položka
+ * s odkazem na jeho detail. Pokud je plán navázaný na zkoušku
+ * nebo událost, zobrazí se příslušný informační štítek.
+ *
+ * Pokud není k semestru připojený žádný studijní plán,
+ * komponenta zobrazí odpovídající informaci místo prázdného seznamu.
  *
  * @component
- * @param {Object} props
+ * @param {Object} props Vlastnosti komponenty.
  * @param {Array<Object>} [props.data=[]] Studijní plány semestru.
- *
- * @returns {JSX.Element}
+ * @param {string} props.data[].id Identifikátor studijního plánu.
+ * @param {string|null} [props.data[].examId] Identifikátor související zkoušky.
+ * @param {string|null} [props.data[].eventId] Identifikátor související události.
+ * @returns {JSX.Element} Přehled studijních plánů nebo informace o prázdném seznamu.
  */
 export const StudyPlanTable = ({ data = [] }) => {
     if (data.length === 0) {

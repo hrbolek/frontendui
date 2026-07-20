@@ -14,6 +14,19 @@ import {
     DeleteButton as TopicDeleteButton,
 } from "../../TopicGQLModel/Mutations/Delete";
 
+/**
+ * Buňka tabulky zobrazující lekce přiřazené k tématu.
+ *
+ * Každá lekce je reprezentována štítkem obsahujícím její typ
+ * a počet výukových jednotek. Pokud téma neobsahuje žádné lekce,
+ * zobrazí se informace „Bez lekcí“.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Object} props.row Téma zobrazované v aktuálním řádku.
+ * @param {Array<Object>} [props.row.lessons] Lekce daného tématu.
+ * @returns {JSX.Element} Buňka tabulky s přehledem lekcí.
+ */
 const TopicLessonsCell = ({ row }) => {
     if (!row?.lessons?.length) {
         return (
@@ -43,6 +56,17 @@ const TopicLessonsCell = ({ row }) => {
     );
 };
 
+/**
+ * Buňka tabulky zobrazující popis tématu.
+ *
+ * Pokud popis není vyplněný, zobrazí se místo něj pomlčka.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Object} props.row Téma zobrazované v aktuálním řádku.
+ * @param {string|null} [props.row.description] Popis tématu.
+ * @returns {JSX.Element} Buňka tabulky s popisem tématu.
+ */
 const TopicDescriptionCell = ({ row }) => (
     <td className="semester-topic-description">
         {row?.description || "—"}
@@ -52,14 +76,35 @@ const TopicDescriptionCell = ({ row }) => (
 /**
  * Zobrazuje témata semestru a umožňuje jejich bezpečné smazání.
  *
- * Smazaný topic se odebere pouze z lokálního zobrazení. Nedochází
- * k obnovení celé stránky a ostatní data semestru zůstávají zachována.
+ * Tabulka zobrazuje uživatelsky důležité údaje o tématu:
+ * název, popis a související lekce. Technické atributy nejsou
+ * v tabulce zobrazené, ale zůstávají dostupné v detailu tématu.
+ *
+ * Smazání tématu je dostupné přes rozbalovací nabídku ve sloupci
+ * „Nástroje“. Po úspěšném smazání se identifikátor tématu uloží
+ * do lokálního stavu a téma se okamžitě odstraní ze zobrazených
+ * dat bez obnovení celé stránky.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Array<Object>} [props.data] Témata zobrazovaného semestru.
+ * @param {Object} props.semester Nadřazený semestr používaný pro kontrolu oprávnění.
+ * @returns {JSX.Element|null} Tabulka témat nebo `null`, pokud nejsou dostupná žádná témata.
  */
 export const TopicTable = ({ data, semester }) => {
+    /*
+     * Set uchovává identifikátory témat, která byla během
+     * aktuálního zobrazení stránky úspěšně smazána.
+     */
     const [deletedTopicIds, setDeletedTopicIds] = useState(
         () => new Set()
     );
 
+    /**
+     * Po úspěšném smazání přidá ID tématu do lokálního seznamu
+     * odstraněných témat. Vytvořením nového Setu se vyvolá
+     * aktualizace React komponenty.
+     */
     const handleTopicDeleted = useCallback((deletedId) => {
         setDeletedTopicIds((currentIds) => {
             const updatedIds = new Set(currentIds);
@@ -69,6 +114,10 @@ export const TopicTable = ({ data, semester }) => {
         });
     }, []);
 
+    /*
+     * Z původních dat odfiltruje témata, která již byla smazána.
+     * Výpočet se opakuje pouze při změně dat nebo seznamu ID.
+     */
     const visibleData = useMemo(() => {
         if (!data) {
             return [];
@@ -79,6 +128,10 @@ export const TopicTable = ({ data, semester }) => {
         );
     }, [data, deletedTopicIds]);
 
+    /*
+     * Definice sloupců se vytváří pouze při změně zobrazených
+     * témat, semestru nebo callbacku zpracovávajícího smazání.
+     */
     const tableDef = useMemo(() => {
         if (visibleData.length === 0) {
             return {};
@@ -107,6 +160,11 @@ export const TopicTable = ({ data, semester }) => {
             component: TopicLessonsCell,
         };
 
+        /*
+         * Nabídka nástrojů obsahuje tlačítko pro smazání tématu.
+         * Samotné potvrzení a provedení GraphQL mutace zajišťuje
+         * komponenta TopicDeleteButton.
+         */
         def.tools = {
             label: "Nástroje",
             component: ({ row }) => (

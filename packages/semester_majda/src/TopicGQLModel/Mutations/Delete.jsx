@@ -13,9 +13,19 @@ import { PermissionGate } from "../../../../dynamic/src/Hooks/useRoles";
 import { useEditAction } from "../../../../dynamic/src/Hooks/useEditAction";
 import { AsyncStateIndicator } from "../../../../_template/src/Base/Helpers/AsyncStateIndicator";
 
+/**
+ * Výchozí komponenta zobrazující údaje topicu před odstraněním.
+ */
 const DefaultContent = MediumContent;
+
+/**
+ * GraphQL async action používaná pro odstranění topicu.
+ */
 const MutationAsyncAction = DeleteAsyncAction;
 
+/**
+ * Role oprávněné odstranit topic.
+ */
 const permissions = {
     oneOfRoles: [
         "studijní administrátor",
@@ -25,6 +35,18 @@ const permissions = {
     mode: "absolute",
 };
 
+/**
+ * Odkaz na samostatnou stránku pro odstranění topicu.
+ *
+ * Komponenta obaluje `BaseDeleteLink`, nastavuje výchozí URI
+ * a aplikuje kontrolu přístupových oprávnění.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {string} [props.uriPattern=DeleteItemURI]
+ *   URI stránky pro odstranění konkrétního topicu.
+ * @returns {JSX.Element} Odkaz na stránku pro odstranění topicu.
+ */
 export const DeleteLink = ({
     uriPattern = DeleteItemURI,
     ...props
@@ -38,6 +60,36 @@ export const DeleteLink = ({
     );
 };
 
+/**
+ * Tlačítko pro bezpečné odstranění topicu.
+ *
+ * Tlačítko se používá uvnitř rozbalovací nabídky tabulky témat.
+ * Po kliknutí zobrazí potvrzovací panel s informacemi o topicu.
+ * Samotné odstranění se provede prostřednictvím GraphQL async
+ * action až po potvrzení uživatelem.
+ *
+ * Po úspěšném odstranění se zavolá callback `onDeleted`.
+ * Nadřazená tabulka pomocí něj odebere topic ze svého lokálního
+ * zobrazení, takže není nutné obnovovat celou stránku.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Function} [props.mutationAsyncAction=MutationAsyncAction]
+ *   Async action provádějící GraphQL mutaci odstranění.
+ * @param {React.ComponentType<Object>} [props.DefaultContent=DefaultContent]
+ *   Komponenta zobrazující odstraňovaný topic.
+ * @param {Object} props.item Odstraňovaný topic.
+ * @param {string} props.item.id Identifikátor topicu.
+ * @param {string} props.item.lastchange Čas poslední změny topicu.
+ * @param {Object} [props.rbacitem] Objekt použitý při kontrole oprávnění.
+ * @param {Function} [props.onDeleted]
+ *   Callback volaný po úspěšném odstranění topicu.
+ * @param {React.ReactNode} [props.children="Smazat topic"]
+ *   Text nebo obsah tlačítka.
+ * @param {string} [props.className="btn btn-outline-danger"]
+ *   CSS třídy tlačítka.
+ * @returns {JSX.Element} Tlačítko a potvrzovací panel odstranění.
+ */
 export const DeleteButton = ({
     mutationAsyncAction = MutationAsyncAction,
     DefaultContent: DefaultContent_ = DefaultContent,
@@ -48,9 +100,21 @@ export const DeleteButton = ({
     className = "btn btn-outline-danger",
     ...props
 }) => {
+    /*
+     * Řídí zobrazení potvrzovacího panelu.
+     */
     const [show, setShow] = useState(false);
+
+    /*
+     * Uchovává odkaz na dropdown nabídku, ze které byl
+     * potvrzovací panel otevřen.
+     */
     const dropdownMenuRef = useRef(null);
 
+    /*
+     * Hook zajišťuje stav ukládání, případnou chybu
+     * a ruční spuštění GraphQL mutace.
+     */
     const {
         loading: saving,
         error: savingError,
@@ -59,6 +123,12 @@ export const DeleteButton = ({
         mode: "confirm",
     });
 
+    /**
+     * Odstraní pomocnou CSS třídu z dropdown nabídky.
+     *
+     * Funkce se používá při zavření panelu, po úspěšném
+     * odstranění i při odpojení komponenty.
+     */
     const cleanupDropdownClass = () => {
         if (dropdownMenuRef.current) {
             dropdownMenuRef.current.classList.remove(
@@ -69,12 +139,23 @@ export const DeleteButton = ({
         }
     };
 
+    /*
+     * Při odpojení komponenty zajistí odstranění dočasné
+     * CSS třídy, aby nezůstala na původní dropdown nabídce.
+     */
     useEffect(() => {
         return () => {
             cleanupDropdownClass();
         };
     }, []);
 
+    /**
+     * Otevře potvrzovací panel odstranění.
+     *
+     * Pokud bylo tlačítko umístěné v dropdown nabídce,
+     * přidá se nabídce CSS třída, která ji dočasně zobrazí
+     * jako modal uprostřed obrazovky.
+     */
     const handleOpen = (event) => {
         const dropdownMenu = event?.currentTarget?.closest?.(".dropdown-menu");
 
@@ -86,11 +167,21 @@ export const DeleteButton = ({
         setShow(true);
     };
 
+    /**
+     * Zavře potvrzovací panel bez provedení mutace.
+     */
     const handleCancel = () => {
         cleanupDropdownClass();
         setShow(false);
     };
 
+    /**
+     * Provede GraphQL mutaci odstranění topicu.
+     *
+     * Pro odstranění je potřeba ID a čas poslední změny.
+     * Po úspěchu se panel zavře a nadřazené komponentě
+     * se prostřednictvím `onDeleted` předá ID odstraněného topicu.
+     */
     const handleDelete = async () => {
         if (!item?.id || !item?.lastchange) {
             return;
@@ -119,6 +210,10 @@ export const DeleteButton = ({
             oneOfRoles={permissions.oneOfRoles}
             mode={permissions.mode}
         >
+            {/*
+             * Styly mění původní dropdown nabídku na potvrzovací
+             * panel zobrazený uprostřed obrazovky.
+             */}
             <style>
                 {`
                     .topic-delete-dropdown-modal {
@@ -239,6 +334,22 @@ export const DeleteButton = ({
     );
 };
 
+/**
+ * Obecný potvrzovací dialog pro odstranění topicu.
+ *
+ * Komponenta obaluje `BaseDeleteDialog`, předává mu výchozí
+ * obsah, GraphQL async action, adresu seznamu a oprávnění.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Function} [props.mutationAsyncAction=MutationAsyncAction]
+ *   Async action provádějící GraphQL mutaci odstranění.
+ * @param {React.ComponentType<Object>} [props.DefaultContent=DefaultContent]
+ *   Komponenta zobrazující odstraňovaný topic.
+ * @param {string} [props.vectorItemsURI=ListURI]
+ *   URI seznamu topiců.
+ * @returns {JSX.Element} Potvrzovací dialog odstranění.
+ */
 export const DeleteDialog = ({
     mutationAsyncAction = MutationAsyncAction,
     DefaultContent: DefaultContent_ = DefaultContent,
@@ -256,6 +367,22 @@ export const DeleteDialog = ({
     );
 };
 
+/**
+ * Obsah samostatné stránky pro odstranění topicu.
+ *
+ * Komponenta obaluje `BaseDeleteBody`, zobrazí informace
+ * o topicu a zajistí provedení GraphQL mutace odstranění.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Function} [props.mutationAsyncAction=MutationAsyncAction]
+ *   Async action provádějící GraphQL mutaci odstranění.
+ * @param {React.ComponentType<Object>} [props.DefaultContent=DefaultContent]
+ *   Komponenta zobrazující odstraňovaný topic.
+ * @param {string} [props.vectorItemsURI=ListURI]
+ *   URI seznamu topiců.
+ * @returns {JSX.Element} Obsah stránky pro odstranění topicu.
+ */
 export const DeleteBody = ({
     mutationAsyncAction = MutationAsyncAction,
     DefaultContent: DefaultContent_ = DefaultContent,

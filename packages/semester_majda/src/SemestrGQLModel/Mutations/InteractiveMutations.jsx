@@ -6,6 +6,19 @@ import { CreateButton as TopicCreateButton } from "../../TopicGQLModel/Mutations
 
 import { ProxyLink } from "../../../../_template/src/Base/Components/ProxyLink";
 
+/**
+ * Odkaz na seznam semestrů předmětu.
+ *
+ * Komponenta používá společný `ProxyLink` a ve výchozím
+ * nastavení zachovává parametry vyhledávání i hash aktuální URL.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {React.ReactNode} props.children Obsah odkazu.
+ * @param {boolean} [props.preserveHash=true] Určuje, zda se zachová hash URL.
+ * @param {boolean} [props.preserveSearch=true] Určuje, zda se zachovají parametry URL.
+ * @returns {JSX.Element} Odkaz na seznam semestrů.
+ */
 export const PageLink = ({
     children,
     preserveHash = true,
@@ -24,6 +37,23 @@ export const PageLink = ({
     );
 };
 
+/**
+ * Zobrazí dostupné interaktivní nástroje pro semestr.
+ *
+ * Nabídka obsahuje odkaz zpět na seznam semestrů, odkaz
+ * na samostatnou editační stránku, otevření editace v dialogu
+ * a tlačítko pro vytvoření nového tématu.
+ *
+ * Dostupnost jednotlivých mutací je řízena komponentami mutací
+ * podle rolí uživatele a RBAC údajů předaného semestru.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Object} props.item Semestr, nad kterým se nástroje provádějí.
+ * @param {string} props.item.id Identifikátor semestru.
+ * @param {Array<Object>} [props.item.topics] Existující témata semestru.
+ * @returns {JSX.Element} Karta s dostupnými nástroji semestru.
+ */
 export const InteractiveMutations = ({ item }) => {
     return (
         <CardCapsule item={item} title="Nástroje">
@@ -47,6 +77,11 @@ export const InteractiveMutations = ({ item }) => {
                 Upravit Dialog
             </UpdateButton>
 
+            {/*
+             * Nové téma se předvyplní identifikátorem semestru,
+             * výchozím názvem a pořadím za posledním existujícím
+             * tématem. Samotnou mutaci zajišťuje TopicCreateButton.
+             */}
             <TopicCreateButton
                 className="btn btn-outline-success"
                 item={{

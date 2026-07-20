@@ -8,33 +8,40 @@ import {
 import { MediumEditableContent, UpdateItemURI } from "../Components";
 import { UpdateAsyncAction } from "../Queries";
 
+/**
+ * Výchozí editovatelný obsah používaný ve všech variantách
+ * aktualizace semestru.
+ */
 const DefaultContent = (props) => <MediumEditableContent {...props} />;
+
+/**
+ * GraphQL async action používaná pro uložení změn semestru.
+ */
 const mutationAsyncAction = UpdateAsyncAction
 
+/**
+ * Role oprávněné provádět aktualizaci semestru.
+ *
+ * Režim `absolute` ověřuje, zda má uživatel alespoň jednu
+ * z uvedených rolí.
+ */
 const permissions = {
     oneOfRoles: ["studijní administrátor", "garant předmětu", "garant programu"],
     mode: "absolute",
 }
 
-// ALTERNATIVE, CHECK GQLENDPOINT
-// const permissions = {
-//     oneOfRoles: ["administrátor", "personalista"],
-//     mode: "item",
-// }
-
 /**
- * Link na update stránku / update route pro konkrétní entitu.
+ * Odkaz na editační stránku konkrétního semestru.
  *
- * Wrapper nad `BaseUpdateLink`. Nastavuje výchozí `uriPattern` a aplikuje RBAC
- * přes `permissions`. Vše ostatní přeposílá do Base komponenty.
+ * Komponenta obaluje `BaseUpdateLink`, nastavuje výchozí URI
+ * editační stránky a předává konfiguraci přístupových oprávnění.
+ * Ostatní vlastnosti jsou předány základní komponentě.
  *
- * @param {Object} params
+ * @component
+ * @param {Object} params Vlastnosti komponenty.
  * @param {string} [params.uriPattern=UpdateItemURI]
- *   URI pattern pro update route (typicky obsahuje `:id` nebo je již konkrétní URL dle routování).
- * @param {Object} params.props
- *   Další props přeposílané do `BaseUpdateLink` (např. `children`, `className`,
- *   `preserveSearch`, `preserveHash`, atd.).
- * @returns {JSX.Element}
+ *   URI vzor editační stránky obsahující identifikátor entity.
+ * @returns {JSX.Element} Odkaz na editační stránku semestru.
  */
 export const UpdateLink = ({
     uriPattern = UpdateItemURI,
@@ -48,21 +55,19 @@ export const UpdateLink = ({
 }
 
 /**
- * Dialog pro editaci entity.
+ * Dialog umožňující editaci semestru.
  *
- * Wrapper nad `BaseUpdateDialog`. Dodává výchozí editovatelný obsah (`DefaultContent`)
- * a výchozí mutační akci (`mutationAsyncAction`) pro uložení změn. Aplikuje RBAC
- * přes `permissions`.
+ * Komponenta obaluje `BaseUpdateDialog` a předává mu výchozí
+ * editovatelný obsah, GraphQL akci pro uložení změn a konfiguraci
+ * přístupových oprávnění.
  *
- * @param {Object} params
+ * @component
+ * @param {Object} params Vlastnosti komponenty.
  * @param {React.ComponentType<Object>} [params.DefaultContent=DefaultContent]
- *   Komponenta, která vykreslí editovatelný obsah dialogu (typicky MediumEditableContent).
+ *   Komponenta vykreslující editovatelný obsah dialogu.
  * @param {Function} [params.mutationAsyncAction=mutationAsyncAction]
- *   Async action (thunk) pro uložení změn (např. UpdateAsyncAction). Použije se podle Base/General implementace.
- * @param {Object} params.props
- *   Další props přeposílané do `BaseUpdateDialog` (např. `title`, `oklabel`, `cancellabel`,
- *   `item`, `onOk`, `onCancel`, atd.).
- * @returns {JSX.Element}
+ *   Async action provádějící GraphQL mutaci aktualizace.
+ * @returns {JSX.Element} Dialog pro editaci semestru.
  */
 export const UpdateDialog = ({
     DefaultContent: DefaultContent_ = DefaultContent,
@@ -80,22 +85,20 @@ export const UpdateDialog = ({
 };
 
 /**
- * Tlačítko, které otevře update dialog a provede uložení.
+ * Tlačítko otevírající dialog pro editaci semestru.
  *
- * Wrapper nad `BaseUpdateButton`. Dodává výchozí `DefaultContent`, výchozí `Dialog`,
- * a výchozí `mutationAsyncAction`. Aplikuje RBAC přes `permissions`.
+ * Komponenta obaluje `BaseUpdateButton` a nastavuje používaný
+ * dialog, editovatelný obsah, GraphQL async action a oprávnění.
  *
- * @param {Object} params
+ * @component
+ * @param {Object} params Vlastnosti komponenty.
  * @param {React.ComponentType<Object>} [params.DefaultContent=DefaultContent]
- *   Komponenta editovatelného obsahu (typicky MediumEditableContent).
+ *   Komponenta editovatelného obsahu.
  * @param {React.ComponentType<Object>} [params.Dialog=UpdateDialog]
- *   Dialog komponenta použitá pro editaci (volá `onOk(draft)` / `onCancel()`).
+ *   Dialog použitý pro editaci semestru.
  * @param {Function} [params.mutationAsyncAction=mutationAsyncAction]
- *   Async action (thunk) pro uložení změn (např. UpdateAsyncAction).
- * @param {Object} params.props
- *   Další props přeposílané do `BaseUpdateButton` (např. `children`, `className`, `title`,
- *   `item`, `uriPattern`, `onOk`, `onCancel`, atd.).
- * @returns {JSX.Element}
+ *   Async action provádějící GraphQL mutaci aktualizace.
+ * @returns {JSX.Element} Tlačítko pro otevření editačního dialogu.
  */
 export const UpdateButton = ({
     DefaultContent: DefaultContent_ = DefaultContent,
@@ -115,21 +118,19 @@ export const UpdateButton = ({
 };
 
 /**
- * “Page-level” update workflow (inline edit / celá stránka editace).
+ * Obsah samostatné stránky pro editaci semestru.
  *
- * Wrapper nad `BaseUpdateBody`. Typicky vykreslí editovatelný obsah (`DefaultContent`)
- * a zajistí uložení přes `mutationAsyncAction` (dle Base/General implementace).
- * Aplikuje RBAC přes `permissions`.
+ * Komponenta obaluje `BaseUpdateBody`, vykresluje editovatelný
+ * obsah a zajišťuje uložení změn pomocí příslušné GraphQL akce.
+ * Přístup k editaci je omezen podle nakonfigurovaných rolí.
  *
- * @param {Object} params
+ * @component
+ * @param {Object} params Vlastnosti komponenty.
  * @param {React.ComponentType<Object>} [params.DefaultContent=DefaultContent]
- *   Komponenta editovatelného obsahu (typicky MediumEditableContent).
+ *   Komponenta editovatelného obsahu stránky.
  * @param {Function} [params.mutationAsyncAction=mutationAsyncAction]
- *   Async action (thunk) pro uložení změn (např. UpdateAsyncAction).
- * @param {Object} params.props
- *   Další props přeposílané do `BaseUpdateBody` (např. `title`, `oklabel`, `cancellabel`,
- *   `item`, `onOk`, `onCancel`, `className`, atd.).
- * @returns {JSX.Element}
+ *   Async action provádějící GraphQL mutaci aktualizace.
+ * @returns {JSX.Element} Obsah stránky pro editaci semestru.
  */
 export const UpdateBody = ({
     DefaultContent: DefaultContent_ = DefaultContent,

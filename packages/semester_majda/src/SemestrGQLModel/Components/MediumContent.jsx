@@ -5,6 +5,16 @@ import {
 
 import { Link } from "./Link";
 
+/**
+ * Sestaví adresu detailu studijního plánu.
+ *
+ * Při lokálním vývoji na portu 5173 přesměruje uživatele
+ * do hlavní aplikace běžící na portu 33001. V publikované
+ * aplikaci použije relativní adresu na stejném serveru.
+ *
+ * @param {string} id Identifikátor studijního plánu.
+ * @returns {string} Adresa detailu studijního plánu.
+ */
 const getStudyPlanURI = (id) => {
     const relativeURI = `/studyplan/StudyPlanGQLModel/view/${id}`;
 
@@ -21,6 +31,18 @@ const getStudyPlanURI = (id) => {
         : relativeURI;
 };
 
+/**
+ * Zobrazí hodnotu příznaku povinnosti semestru.
+ *
+ * Hodnota `true` se zobrazí jako zelený štítek „Ano“,
+ * hodnota `false` jako šedý štítek „Ne“. Pokud hodnota
+ * není dostupná, zobrazí se pomlčka.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {boolean|null|undefined} props.value Hodnota příznaku povinnosti.
+ * @returns {JSX.Element|string} Vizuální reprezentace hodnoty.
+ */
 const MandatoryValue = ({ value }) => {
     if (value === true) {
         return (
@@ -41,6 +63,18 @@ const MandatoryValue = ({ value }) => {
     return "—";
 };
 
+/**
+ * Zobrazí stručný přehled témat a jejich lekcí.
+ *
+ * Každé téma obsahuje název a seznam lekcí zobrazených
+ * pomocí štítků. U lekce se zobrazuje její typ a počet
+ * výukových jednotek.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Array<Object>} [props.topics] Témata semestru.
+ * @returns {JSX.Element|string} Přehled témat nebo pomlčka.
+ */
 const TopicSummary = ({ topics }) => {
     if (!topics?.length) {
         return "—";
@@ -83,6 +117,20 @@ const TopicSummary = ({ topics }) => {
     );
 };
 
+/**
+ * Zobrazí základní read-only informace o semestru předmětu.
+ *
+ * Komponenta zobrazuje identifikátor semestru, pořadí,
+ * kredity, povinnost, předmět, způsob zakončení, datum
+ * poslední změny, témata s lekcemi a odkazy na související
+ * studijní plány.
+ *
+ * @component
+ * @param {Object} props Vlastnosti komponenty.
+ * @param {Object} props.item Zobrazovaný semestr předmětu.
+ * @param {React.ReactNode} [props.children] Dodatečný obsah komponenty.
+ * @returns {JSX.Element} Detail semestru předmětu.
+ */
 export const MediumContent = ({ item, children }) => {
     return (
         <>
