@@ -212,30 +212,61 @@ Při publikaci jsem narazila také na chyby autorizace npm. Nejprve npm vracelo 
 
 Výsledkem jsou dva veřejné balíčky: knihovna s modely a samostatná Vite aplikace.
 
-## Aktuálně řešený integrační problém
+## Integrace do hostitelské aplikace na portu 33001
 
-Lokální aplikace na portu `5173` používá vlastní router a fungují v ní cesty pod `/semestr`. Při otevření stejného modelu v hostitelské aplikaci na portu `33001` se však odkazy z automaticky generovaného seznamu stále vytvářejí pod `/generic`.
+Lokální aplikace na portu `5173` používá vlastní router a cesty pod `/semestr`. Hostitelská aplikace na portu `33001` ale odkazy z automaticky generovaného seznamu vytváří pod `/generic`.
 
-Pozorované chování:
-
-1. ručně zadaná cesta `/semestr/SemesterGQLModel/list` zobrazí seznam;
-2. odkaz vytvořený tabulkou ale míří na `/generic/SemesterGQLModel/view/:id`;
-3. otevře se obecný prohlížeč místo vlastní stránky;
-4. obecný prohlížeč vytváří rozsáhlejší GraphQL dotaz;
-5. dotaz skončí chybou z federované služby `office`:
+Stejné chování se objevilo také v projektech spolužáků. Použitým řešením je ruční změna kořene URI v adresním řádku:
 
 ```text
-Expected value of type 'EventInvitationGQLModel' but got: <generator>
+http://localhost:33001/generic/SemesterGQLModel/view/:id
 ```
 
-Samostatné testovací GraphQL dotazy na `semesterPage` přes Apollo gateway vracejí HTTP 200 a správná data. Problém se tedy neprojevuje při základním načtení semestrů, ale až při použití obecného prohlížeče a jeho rozšířeného dotazu.
+se změní na:
 
-Dosavadní zjištění ukazují na kombinaci dvou oddělených problémů:
+```text
+http://localhost:33001/semestr/SemesterGQLModel/view/:id
+```
 
-- hostitelský frontend na `33001` nepoužije pro automatický odkaz vlastní registrovanou cestu modelu;
-- obecný GraphQL dotaz následně narazí na chybu resolveru `invitations` ve službě `office`.
+Po této změně se již spustí moje vlastní stránka místo obecného prohlížeče. Tím se zároveň obejde rozšířený generic GraphQL dotaz, který dříve končil chybou resolveru `EventInvitationGQLModel` ve federované službě `office`.
 
-Definitivní řešení integrace zatím není potvrzené. Funkčnost vlastního frontendu, vlastních dotazů a publikovaných balíčků byla ověřena odděleně. Po zjištění správného způsobu registrace studentské aplikace do hostitelského frontendu bude tato část dokumentace doplněna.
+### Chybějící vzhled publikované aplikace
+
+Po zprovoznění vlastní URI se stránka na `33001` zobrazila bez Bootstrapu a vlastních stylů, přestože stejná stránka na `5173` vypadala správně. Rozdíl způsobovaly dva různé vstupní body aplikace:
+
+- vývojový server na `5173` spouští `main.jsx`;
+- publikovanou aplikaci v hostitelském frontendu spouští `StandaloneEntry.jsx`.
+
+`StandaloneEntry.jsx` sice CSS importoval, ale Vite v režimu knihovny styly oddělil do samostatného souboru. Hostitelská aplikace načetla výsledný JavaScript, ale samostatný CSS soubor už automaticky nepřipojila.
+
+Řešením bylo načíst Bootstrap a aplikační CSS pomocí Vite přípony `?inline`:
+
+```jsx
+import bootstrapCss from "bootstrap/dist/css/bootstrap.min.css?inline";
+import applicationCss from "./index.css?inline";
+```
+
+Oba styly se tím stanou textovou součástí JavaScriptového bundlu. Funkce `ensureStyles` při připojení aplikace vytvoří v dokumentu element `<style>` a vloží do něj oba CSS řetězce:
+
+```jsx
+const ensureStyles = () => {
+    let styleElement = document.getElementById("maya0552-app-semestr-styles");
+
+    if (!styleElement) {
+        styleElement = document.createElement("style");
+        styleElement.id = "maya0552-app-semestr-styles";
+        document.head.appendChild(styleElement);
+    }
+
+    styleElement.textContent = `${bootstrapCss}\n${applicationCss}`;
+};
+```
+
+Funkce se volá před `createRoot`, takže jsou styly dostupné ještě před vykreslením aplikace. Současně byly odstraněny pomocné debugovací výpisy a v `package.json` byl opraven překlep `"type_"` na platné `"type": "module"`.
+
+Po novém buildu, zvýšení verze a publikaci `@maya0552/app_semestr` se vlastní stránka na portu `33001` zobrazuje stejně jako lokální varianta na `5173`.
+
+Automaticky generované odkazy hostitelské aplikace nadále používají `/generic/`; ruční přepsání tohoto segmentu je proto zatím známý a ověřený workaround.
 
 ## Hlavní získané zkušenosti
 
