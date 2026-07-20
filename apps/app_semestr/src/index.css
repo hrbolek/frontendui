@@ -45,3 +45,257 @@
       page-break-inside: avoid;
     }
   }
+  /* Semester detail */
+
+.semester-large-card {
+    --semester-border: #dee2e6;
+    --semester-muted: #6c757d;
+    --semester-surface: #ffffff;
+    --semester-soft-background: #f8f9fa;
+}
+
+.semester-detail-row {
+    align-items: flex-start;
+}
+
+.semester-sidebar,
+.semester-main-content {
+    min-width: 0;
+}
+
+.semester-sidebar > * + * {
+    margin-top: 1rem;
+}
+
+.semester-sidebar .Attribute_Row {
+    align-items: flex-start;
+    margin-bottom: 0.45rem;
+}
+
+.semester-sidebar .Attribute_Col_Label {
+    color: #343a40;
+}
+
+.semester-sidebar .Attribute_Col_Value {
+    min-width: 0;
+}
+
+.semester-entity-id {
+    overflow-wrap: anywhere;
+}
+
+.semester-topic-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.semester-topic-summary-item {
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.semester-topic-summary-item:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.semester-topic-summary-name {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.semester-lesson-badges,
+.semester-table-lesson-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.semester-study-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.semester-study-plan-link {
+    overflow-wrap: anywhere;
+}
+
+.semester-mutations .btn {
+    margin: 0.15rem;
+}
+
+.semester-main-content fieldset {
+    border-color: var(--semester-border);
+    border-radius: 0.65rem;
+}
+
+.semester-main-content legend {
+    color: #495057;
+}
+
+.semester-topic-table .table-responsive {
+    border: 1px solid var(--semester-border);
+    border-radius: 0.65rem;
+}
+
+.semester-topic-table table {
+    margin-bottom: 0;
+}
+
+.semester-topic-table th {
+    padding: 0.8rem;
+    color: #495057;
+    background: var(--semester-soft-background);
+    white-space: nowrap;
+}
+
+.semester-topic-table td {
+    padding: 0.8rem;
+    vertical-align: middle;
+}
+
+.semester-topic-description {
+    max-width: 22rem;
+    white-space: normal;
+}
+
+.semester-topic-tools {
+    width: 1%;
+    text-align: right;
+    white-space: nowrap;
+}
+
+@media (max-width: 1199.98px) {
+    .semester-sidebar {
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .semester-sidebar .Attribute_Col_Label {
+        margin-bottom: 0.15rem;
+    }
+
+    .semester-topic-table th,
+    .semester-topic-table td {
+        padding: 0.6rem;
+    }
+}
+/* Hlavní obsah detailu semestru */
+.semester-generated-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Rozbalovací technické informace */
+.semester-technical-panel {
+    margin-top: 0.25rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.75rem;
+    background: #f8f9fa;
+    overflow: hidden;
+}
+
+.semester-technical-panel > summary {
+    padding: 0.9rem 1.1rem;
+    color: #495057;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+}
+
+.semester-technical-panel > summary:hover {
+    background: #eef1f4;
+}
+
+.semester-technical-panel-content {
+    padding: 0 1rem 1rem;
+    background: white;
+    border-top: 1px solid #dee2e6;
+}
+.semester-study-plan-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.semester-study-plan-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.65rem;
+    background: #fff;
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.semester-study-plan-item:hover {
+    border-color: #86b7fe;
+    box-shadow: 0 0.2rem 0.7rem rgba(13, 110, 253, 0.08);
+}
+
+.semester-study-plan-main {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 0;
+}
+
+.semester-study-plan-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 2rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    color: white;
+    background: #0d6efd;
+    font-weight: 600;
+}
+
+.semester-study-plan-link {
+    font-weight: 600;
+}
+
+.semester-study-plan-description {
+    margin-top: 0.15rem;
+    color: #6c757d;
+    font-size: 0.85rem;
+}
+
+.semester-study-plan-relations {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.semester-study-plan-empty {
+    padding: 1rem;
+    color: #6c757d;
+    text-align: center;
+    border: 1px dashed #ced4da;
+    border-radius: 0.65rem;
+    background: #f8f9fa;
+}
+
+@media (max-width: 767.98px) {
+    .semester-study-plan-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .semester-study-plan-relations {
+        justify-content: flex-start;
+        padding-left: 2.8rem;
+    }
+}

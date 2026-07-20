@@ -268,6 +268,10 @@ Po novém buildu, zvýšení verze a publikaci `@maya0552/app_semestr` se vlastn
 
 Automaticky generované odkazy hostitelské aplikace nadále používají `/generic/`; ruční přepsání tohoto segmentu je proto zatím známý a ověřený workaround.
 
+### 20. 7. 2026 – Úprava vzhledu detailu semestru
+
+Upravila jsem vzhled detailu semestru tak, aby byly nejdůležitější informace přehlednější. Témata, lekce a studijní plány se nyní zobrazují v uživatelsky přívětivé podobě a technické údaje jsou schované v rozbalovací sekci. Studijní plány jsem nahradila vlastní komponentou s funkčními odkazy. Při úpravě jsem také opravila pořadí podmínek ve `VectorAttribute.jsx`, protože obecný `return` původně znemožňoval vykreslení nové komponenty. Funkce vytváření a mazání témat zůstaly zachované.
+
 ## Hlavní získané zkušenosti
 
 Během projektu jsem si prakticky vyzkoušela:
